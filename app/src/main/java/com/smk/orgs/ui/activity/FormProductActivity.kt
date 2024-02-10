@@ -6,12 +6,16 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.smk.orgs.R
 import com.smk.orgs.dao.ProductDao
+import com.smk.orgs.databinding.ActivityFormProductBinding
+import com.smk.orgs.databinding.ActivityListProductsBinding
 import com.smk.orgs.model.Product
 import java.math.BigDecimal
 
-class FormProductActivity : AppCompatActivity(
-    R.layout.activity_form_product
-) {
+class FormProductActivity : AppCompatActivity() {
+
+    private val binding by lazy {
+        ActivityFormProductBinding.inflate(layoutInflater)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,7 +23,7 @@ class FormProductActivity : AppCompatActivity(
     }
 
     private fun configureSaveButton() {
-        val saveButton: Button = findViewById<Button>(R.id.product_form_save_button)
+        val saveButton: Button = binding.productFormSaveButton
         saveButton.setOnClickListener {
             val newProduct = createNewProduct()
             val dao = ProductDao()
@@ -30,13 +34,13 @@ class FormProductActivity : AppCompatActivity(
     }
 
     private fun createNewProduct(): Product {
-        val titleField: EditText = findViewById<EditText>(R.id.product_form_title)
+        val titleField: EditText = binding.productFormTitle
         val title = titleField.text.toString()
 
-        val descriptionField: EditText = findViewById<EditText>(R.id.product_form_description)
+        val descriptionField: EditText = binding.productFormDescription
         val description = descriptionField.text.toString()
 
-        val amountField: EditText = findViewById<EditText>(R.id.product_form_amount)
+        val amountField: EditText = binding.productFormAmount
         val amountToText = amountField.text.toString()
         val amount = if (amountToText.isBlank()) {
             BigDecimal.ZERO
