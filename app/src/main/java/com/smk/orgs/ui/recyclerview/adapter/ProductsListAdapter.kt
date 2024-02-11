@@ -17,17 +17,31 @@ import java.util.Locale
 
 class ProductsListAdapter(
     private val context: Context,
-    products: List<Product>
+    products: List<Product>,
+    var whenNoItem: (product: Product) -> Unit = {}
 ) : RecyclerView.Adapter<ProductsListAdapter.ViewHolder>() {
 
     private val products = products.toMutableList()
 
-    class ViewHolder(private val binding: ProductItemBinding) :
+    inner class ViewHolder(private val binding: ProductItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
+        private lateinit var product: Product
+
+        init {
+            itemView.setOnClickListener {
+                if (::product.isInitialized) {
+                    whenNoItem(product)
+                }
+            }
+        }
+
         private val title = binding.productFormTitle
         private val description = binding.productFormDescription
         private val amount = binding.productFormAmount
         fun vincule(product: Product) {
+            this.product = product
+
             title.text = product.title
             description.text = product.description
             val currencyInstance = NumberFormat.getCurrencyInstance(Locale("pt", "br"))
