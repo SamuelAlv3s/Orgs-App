@@ -1,6 +1,7 @@
 package com.smk.orgs.dao
 
 import com.smk.orgs.model.Product
+import java.math.BigDecimal
 
 class ProductDao {
 
@@ -13,6 +14,8 @@ class ProductDao {
     }
 
     companion object {
-        private val products = mutableListOf<Product>()
+        private val products = mutableListOf<Product>(
+            Product("Fruits", "Description about...", BigDecimal("25.00"))
+        )
     }
 }

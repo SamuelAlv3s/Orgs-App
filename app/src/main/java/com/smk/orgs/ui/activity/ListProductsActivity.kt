@@ -1,10 +1,12 @@
 package com.smk.orgs.ui.activity
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.smk.orgs.R
 import com.smk.orgs.dao.ProductDao
 import com.smk.orgs.databinding.ActivityListProductsBinding
@@ -34,7 +36,7 @@ class ListProductsActivity : AppCompatActivity() {
     }
 
     private fun configureFab() {
-        val fab: FloatingActionButton = binding.productListFloatingActionButton
+        val fab: ExtendedFloatingActionButton = binding.productListFloatingActionButton
         fab.setOnClickListener {
             goToFormProductActivity()
         }
@@ -46,7 +48,6 @@ class ListProductsActivity : AppCompatActivity() {
     }
 
     private fun configureReciclerView() {
-        val dao = ProductDao()
         val recyclerView: RecyclerView = binding.productListRecyclerView
         recyclerView.adapter = adapter
     }

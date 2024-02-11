@@ -3,12 +3,17 @@ package com.smk.orgs.ui.activity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import coil.load
 import com.smk.orgs.R
 import com.smk.orgs.dao.ProductDao
 import com.smk.orgs.databinding.ActivityFormProductBinding
 import com.smk.orgs.databinding.ActivityListProductsBinding
+import com.smk.orgs.databinding.FormImageBinding
+import com.smk.orgs.extensions.tryToLoadingImage
 import com.smk.orgs.model.Product
+import com.smk.orgs.ui.dialog.FormImageDialog
 import java.math.BigDecimal
 
 class FormProductActivity : AppCompatActivity() {
@@ -17,9 +22,19 @@ class FormProductActivity : AppCompatActivity() {
         ActivityFormProductBinding.inflate(layoutInflater)
     }
 
+    private var url: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(binding.root)
+        title = "Cadastrar produto"
         configureSaveButton()
+        binding.productFormImage.setOnClickListener {
+            FormImageDialog(this).show(url) { image ->
+                url = image
+                binding.productFormImage.tryToLoadingImage((url))
+            }
+        }
     }
 
     private fun configureSaveButton() {
@@ -48,6 +63,6 @@ class FormProductActivity : AppCompatActivity() {
             BigDecimal(amountToText)
         }
 
-        return Product(title, description, amount)
+        return Product(title, description, amount, image = url)
     }
 }
