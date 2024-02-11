@@ -6,17 +6,21 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.smk.orgs.R
 import com.smk.orgs.dao.ProductDao
+import com.smk.orgs.database.AppDatabase
 import com.smk.orgs.databinding.ActivityListProductsBinding
+import com.smk.orgs.model.Product
 import com.smk.orgs.ui.recyclerview.adapter.ProductsListAdapter
+import java.math.BigDecimal
 
 class ListProductsActivity : AppCompatActivity() {
 
     private val dao = ProductDao()
     private val adapter by lazy {
-        ProductsListAdapter(this, dao.getAllProducts())
+        ProductsListAdapter(this)
     }
     private val binding by lazy {
         ActivityListProductsBinding.inflate(layoutInflater)
@@ -24,15 +28,18 @@ class ListProductsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(binding.root)
         configureReciclerView()
         configureFab()
-        setContentView(binding.root)
+
 //        recyclerView.layoutManager = LinearLayoutManager(this)
     }
 
     override fun onResume() {
         super.onResume()
-        adapter.update(dao.getAllProducts())
+        val db = AppDatabase.instance(this)
+        val productDao = db.productDao()
+        adapter.update(productDao.getAll())
     }
 
     private fun configureFab() {

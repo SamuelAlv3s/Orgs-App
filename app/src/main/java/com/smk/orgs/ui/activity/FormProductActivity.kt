@@ -1,13 +1,17 @@
 package com.smk.orgs.ui.activity
 
+import android.os.Build
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.room.Room
 import coil.load
 import com.smk.orgs.R
 import com.smk.orgs.dao.ProductDao
+import com.smk.orgs.database.AppDatabase
 import com.smk.orgs.databinding.ActivityFormProductBinding
 import com.smk.orgs.databinding.ActivityListProductsBinding
 import com.smk.orgs.databinding.FormImageBinding
@@ -23,6 +27,7 @@ class FormProductActivity : AppCompatActivity() {
     }
 
     private var url: String? = null
+    private var productId = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,15 +40,38 @@ class FormProductActivity : AppCompatActivity() {
                 binding.productFormImage.tryToLoadingImage((url))
             }
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra<Product>(CHAVE_PRODUTO, Product::class.java)?.let { loadedProduct ->
+                title = "Alterar produto"
+                productId = loadedProduct.id
+                url = loadedProduct.image
+                binding.productFormImage.tryToLoadingImage(loadedProduct.image)
+                binding.productFormTitle.setText(loadedProduct.title)
+                binding.productFormDescription.setText(loadedProduct.description)
+                binding.productFormAmount.setText(loadedProduct.amount.toPlainString())
+            }
+        } else {
+            intent.getParcelableExtra<Product>(CHAVE_PRODUTO)?.let { loadedProduct ->
+                title = "Alterar produto"
+                productId = loadedProduct.id
+                url = loadedProduct.image
+                binding.productFormImage.tryToLoadingImage(loadedProduct.image)
+                binding.productFormTitle.setText(loadedProduct.title)
+                binding.productFormDescription.setText(loadedProduct.description)
+                binding.productFormAmount.setText(loadedProduct.amount.toPlainString())
+            }
+        }
     }
 
     private fun configureSaveButton() {
         val saveButton: Button = binding.productFormSaveButton
+        val db = AppDatabase.instance(this)
+        val productDao = db.productDao()
         saveButton.setOnClickListener {
             val newProduct = createNewProduct()
-            val dao = ProductDao()
 
-            dao.addProduct(newProduct)
+            productDao.saveProduct(newProduct)
+
             finish()
         }
     }
@@ -63,6 +91,6 @@ class FormProductActivity : AppCompatActivity() {
             BigDecimal(amountToText)
         }
 
-        return Product(title, description, amount, image = url)
+        return Product(id = productId, title = title, description = description, amount = amount, image = url)
     }
 }
